@@ -3,7 +3,7 @@
 <head>
     <link rel="icon" type="image/png" href="favicon.ico">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Tabela de Preços - Bioscare</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -14,6 +14,7 @@
             box-sizing: border-box;
         }
 
+        /* Garantir que o body ocupe toda altura e centralize o conteúdo */
         body {
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
@@ -21,10 +22,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 20px;
+            margin: 0;
         }
 
-        /* ========== TELA DE LOGIN (centralizada) ========== */
+        /* ========== TELA DE LOGIN (CENTRALIZADA) ========== */
         .login-container {
             width: 100%;
             max-width: 440px;
@@ -36,9 +38,6 @@
             padding: 40px 32px;
             box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
             text-align: center;
-        }
-        .login-logo {
-            margin-bottom: 24px;
         }
         .login-logo img {
             max-width: 180px;
@@ -76,8 +75,8 @@
         }
         .login-input:focus {
             border-color: #3b82f6;
-            outline: none;
             box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            outline: none;
         }
         .btn-login {
             width: 100%;
@@ -123,7 +122,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .main-header {
             background: white;
             border-radius: 24px;
@@ -167,7 +165,6 @@
             cursor: pointer;
         }
 
-        /* Perfil */
         .profile-panel {
             background: white;
             border-radius: 20px;
@@ -192,7 +189,6 @@
             cursor: pointer;
         }
 
-        /* Pesquisa */
         .search-section {
             background: white;
             border-radius: 20px;
@@ -217,7 +213,6 @@
             cursor: pointer;
         }
 
-        /* Importador */
         .import-section {
             background: white;
             border-radius: 20px;
@@ -231,6 +226,7 @@
             padding: 12px;
             font-family: monospace;
             margin-bottom: 12px;
+            resize: vertical;
         }
         .btn-import, .btn-import-excel {
             background: #0f172a;
@@ -241,60 +237,62 @@
             cursor: pointer;
         }
 
-        /* Tabela - correção de sticky e fundo */
+        /* CORREÇÃO: Tabela com rolagem vertical e cabeçalho fixo */
         .table-wrapper {
             background: white;
             border-radius: 24px;
             overflow-x: auto;
+            overflow-y: auto;
+            max-height: 70vh;  /* Altura máxima para rolagem vertical */
             position: relative;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
         }
         th, td {
             padding: 14px 16px;
             border-bottom: 1px solid #edf2f7;
             text-align: left;
-            background-color: white; /* fundo consistente */
+            background-color: white; /* Fundo branco para todas as células */
         }
         th {
-            background: #f8fafc;
+            background-color: #f8fafc;
             font-weight: 600;
+            position: sticky;
+            top: 0;  /* Fixa o cabeçalho no topo durante rolagem vertical */
+            z-index: 10;
         }
-        .inactive-row {
-            opacity: 0.5;
-            background-color: #f1f5f9 !important;
-        }
-        .inactive-row td {
-            text-decoration: line-through;
-        }
-        /* Colunas fixas com fundo consistente */
+        /* CORREÇÃO das colunas sticky para não haver buracos */
         .sticky-col-1 {
             position: sticky;
             left: 0;
-            background-color: white;
-            z-index: 2;
+            background-color: white !important;
+            z-index: 5;
             box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
         }
         .sticky-col-2 {
             position: sticky;
-            left: 80px; /* ajuste para não sobrepor */
-            background-color: white;
-            z-index: 2;
+            left: 120px;
+            background-color: white !important;
+            z-index: 5;
             box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
         }
         th.sticky-col-1, th.sticky-col-2 {
-            background-color: #f8fafc;
-            z-index: 3;
+            background-color: #f8fafc !important;
+            z-index: 15;
         }
-        /* Para evitar buracos, garantir que as células não tenham background transparente */
-        td.sticky-col-1, td.sticky-col-2 {
-            background-color: white;
+        /* Linhas inativas */
+        .inactive-row td {
+            opacity: 0.5;
+            text-decoration: line-through;
+            background-color: #f1f5f9 !important;
+        }
+        .inactive-row .actions {
+            text-decoration: none;
         }
 
-        /* Cards */
+        /* Cards e paginação (mantidos) */
         .cards-wrapper { display: none; }
         .cards-wrapper.active { display: block; }
         .cards-grid {
@@ -318,13 +316,12 @@
             gap: 8px;
             margin: 12px 0;
         }
-
-        /* Paginação */
         .pagination-container {
             margin-top: 24px;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
+            gap: 12px;
         }
         .pagination-controls button {
             background: white;
@@ -333,8 +330,6 @@
             border-radius: 30px;
             cursor: pointer;
         }
-
-        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -376,52 +371,32 @@
             cursor: pointer;
         }
         .btn-save { background: #16a34a; color: white; }
-        .btn-cancel { background: #e2e8f0; color: #1e293b; }
-        .form-row { margin-bottom: 16px; }
-        .form-row label { display: block; font-weight: 600; margin-bottom: 6px; }
-        .form-row input { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #cbd5e1; }
+        .btn-cancel { background: #e2e8f0; }
+        @media (max-width: 640px) {
+            .sticky-col-2 { left: 100px; } /* Ajuste para telas pequenas */
+        }
     </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
 <div class="login-container" id="loginContainer">
     <div class="login-card">
-        <div class="login-logo">
-            <img src="logo.png" alt="Logo da Empresa">
-        </div>
+        <div class="login-logo"><img src="logo.png" alt="Logo"></div>
         <div class="login-title">Tabela de Preços</div>
-        <div class="login-sub">Acesse o sistema de preços</div>
-        <div class="input-group">
-            <label>E-mail</label>
-            <input type="email" id="loginEmail" class="login-input" placeholder="seu@email.com">
-        </div>
-        <div class="input-group">
-            <label>Senha</label>
-            <input type="password" id="loginSenha" class="login-input" placeholder="********">
-        </div>
+        <div class="login-sub">Acesse o sistema</div>
+        <div class="input-group"><label>E-mail</label><input type="email" id="loginEmail" class="login-input" placeholder="seu@email.com"></div>
+        <div class="input-group"><label>Senha</label><input type="password" id="loginSenha" class="login-input" placeholder="********"></div>
         <button class="btn-login" onclick="fazerLogin()">Entrar</button>
-        <div class="credentials-hint">
-            <strong>Contato:</strong><br>
-            pedidos@bioscare.com.br 
-        </div>
+        <div class="credentials-hint"><strong>Contato:</strong><br>pedidos@bioscare.com.br</div>
         <div id="loginError" class="error-message"></div>
     </div>
 </div>
 
-<!-- SISTEMA PRINCIPAL -->
 <div class="system-container" id="systemContainer">
     <div class="main-header">
-        <div class="logo-area">
-            <img src="logo.png" alt="Logo" style="height: 40px;">
-            <h1>Tabela de Preços</h1>
-        </div>
-        <div class="user-info">
-            <span><i class="fas fa-user"></i> <span id="perfilLabel"></span></span>
-            <button class="btn-logout" onclick="logout()">Sair</button>
-        </div>
+        <div class="logo-area"><img src="logo.png" alt="Logo"><h1>Tabela de Preços</h1></div>
+        <div class="user-info"><span><i class="fas fa-user"></i> <span id="perfilLabel"></span></span><button class="btn-logout" onclick="logout()">Sair</button></div>
     </div>
-
     <div class="profile-panel" id="profilePanel">
         <div class="profile-badge">Perfil: <strong id="perfilDetalhe"></strong></div>
         <div class="btn-group">
@@ -431,23 +406,12 @@
             <button onclick="mudarNivel('vendedor2')">📈 Representante (5-8)</button>
         </div>
     </div>
-
     <div class="search-section">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por código ou descrição..." onkeyup="aplicarFiltro()">
-        <div class="action-buttons">
-            <button onclick="exportarCSV()">📄 CSV</button>
-            <button onclick="exportarExcel()">📊 Excel</button>
-            <button onclick="alternarVisualizacao()">🔄 Cards</button>
-        </div>
+        <div class="action-buttons"><button onclick="exportarCSV()">📄 CSV</button><button onclick="exportarExcel()">📊 Excel</button><button onclick="alternarVisualizacao()">🔄 Cards</button></div>
     </div>
-
-    <div class="import-section" id="importSection">
-        <h3>Importar dados</h3>
-        <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <button class="btn-import-excel" onclick="document.getElementById('fileExcel').click()">📂 Importar Excel</button>
-            <input type="file" id="fileExcel" accept=".xls,.xlsx" style="display:none" onchange="importarArquivoExcel(this.files[0])">
-            <span>ou cole CSV:</span>
-        </div>
+    <div class="import-section" id="importSection"><h3>Importar dados</h3>
+        <div style="display:flex; gap:10px; margin-bottom:12px;"><button class="btn-import-excel" onclick="document.getElementById('fileExcel').click()">📂 Importar Excel</button><input type="file" id="fileExcel" accept=".xls,.xlsx" style="display:none" onchange="importarArquivoExcel(this.files[0])"><span>ou cole CSV:</span></div>
         <textarea id="csvInput">001;Arroz Agulhinha 5kg;Pct;18.50;19.00;19.50;20.00;21.00;21.50;22.00;22.50
 002;Feijão Preto 1kg;Un;7.20;7.40;7.60;7.80;8.20;8.40;8.60;8.80
 003;Óleo de Soja 900ml;Cxa;5.10;5.25;5.40;5.55;5.80;5.95;6.10;6.25
@@ -455,62 +419,15 @@
 205;Café Torrado 500g;Un;14.20;14.50;14.80;15.10;15.50;15.80;16.10;16.40</textarea>
         <button class="btn-import" onclick="processarImportacao()">➕ Processar CSV</button>
     </div>
-
-    <div class="table-wrapper" id="tableView">
-        <table id="tabelaPrecos">
-            <thead id="tabelaHead"></thead>
-            <tbody id="corpoTabela"></tbody>
-        </table>
-    </div>
-
-    <div class="cards-wrapper" id="cardsView">
-        <div class="cards-grid" id="cardsGrid"></div>
-    </div>
-
+    <div class="table-wrapper" id="tableView"><table id="tabelaPrecos"><thead id="tabelaHead"></thead><tbody id="corpoTabela"></tbody></table></div>
+    <div class="cards-wrapper" id="cardsView"><div class="cards-grid" id="cardsGrid"></div></div>
     <div class="pagination-container">
-        <div>
-            <label>Itens por página: </label>
-            <select id="perPageSelect" onchange="mudarItensPorPagina()">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
-        </div>
-        <div class="pagination-controls">
-            <button id="btnPrimeira" onclick="irParaPagina(1)">« Primeira</button>
-            <button id="btnAnterior" onclick="paginaAnterior()">Anterior</button>
-            <span id="pageInfo">Página 1 de 1</span>
-            <button id="btnProxima" onclick="proximaPagina()">Próxima</button>
-            <button id="btnUltima" onclick="irParaUltimaPagina()">Última »</button>
-        </div>
+        <div><label>Itens por página: </label><select id="perPageSelect" onchange="mudarItensPorPagina()"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></div>
+        <div class="pagination-controls"><button id="btnPrimeira" onclick="irParaPagina(1)">« Primeira</button><button id="btnAnterior" onclick="paginaAnterior()">Anterior</button><span id="pageInfo">Página 1 de 1</span><button id="btnProxima" onclick="proximaPagina()">Próxima</button><button id="btnUltima" onclick="irParaUltimaPagina()">Última »</button></div>
     </div>
 </div>
 
-<!-- MODAL DE EDIÇÃO -->
-<div id="editModal" class="modal-overlay">
-    <div class="modal-container">
-        <h2>✏️ Editar Produto</h2>
-        <input type="hidden" id="editRowId">
-        <div class="form-row">
-            <label>Código</label>
-            <input type="text" id="editCodigo" readonly style="background:#f1f5f9;">
-        </div>
-        <div class="form-row">
-            <label>Descrição</label>
-            <input type="text" id="editDescricao">
-        </div>
-        <div class="form-row">
-            <label>Fracionamento</label>
-            <input type="text" id="editFrac">
-        </div>
-        <div class="prices-grid" id="pricesGrid"></div>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
-            <button class="btn-save" onclick="salvarEdicao()">Salvar</button>
-        </div>
-    </div>
-</div>
+<div id="editModal" class="modal-overlay"><div class="modal-container"><h2>✏️ Editar Produto</h2><input type="hidden" id="editRowId"><div class="form-row"><label>Código</label><input type="text" id="editCodigo" readonly style="background:#f1f5f9;"></div><div class="form-row"><label>Descrição</label><input type="text" id="editDescricao"></div><div class="form-row"><label>Fracionamento</label><input type="text" id="editFrac"></div><div class="prices-grid" id="pricesGrid"></div><div class="modal-footer"><button class="btn-cancel" onclick="fecharModal()">Cancelar</button><button class="btn-save" onclick="salvarEdicao()">Salvar</button></div></div></div>
 
 <script>
     // ========== AUTENTICAÇÃO ==========
@@ -721,6 +638,7 @@
         gerarCamposPrecoModal();
         nivelReal = nivel;
         nivelAtual = nivel;
+        const podeEditar = (nivel === 'admin' || nivel === 'gerente');
         const podeImportar = (nivel === 'admin');
         const importDiv = document.getElementById('importSection');
         if(importDiv) importDiv.style.display = podeImportar ? 'block' : 'none';
