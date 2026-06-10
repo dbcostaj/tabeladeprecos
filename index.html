@@ -578,8 +578,8 @@
         "representante@empresa.com": { senha: "rep123", nivel: "vendedor2" }
     };
     
-    let nivelReal = 'admin';      // Perfil real do login (não pode ser alterado por vendedor/rep)
-    let nivelAtual = 'admin';     // Perfil que está sendo exibido (pode ser alterado via simulação apenas por admin/gerente)
+    let nivelReal = 'admin';      // Perfil real do login (não pode ser alterado)
+    let nivelAtual = 'admin';     // Perfil que está sendo exibido (pode ser simulado apenas por admin/gerente)
     let produtos = [];
     let filtroTexto = '';
     let colunaOrdenacao = 'codigo';
@@ -968,13 +968,13 @@
     function exportarExcel() {
         let html = '<table border="1"><tr><th>Código</th><th>Descrição</th><th>Frac</th>';
         for (let i=1;i<=8;i++) html+=`<th>Tab${i}</th>`;
-        html+='</table>';
+        html+='</tr>';
         produtos.forEach(p => {
             html+=`<tr><td>${p.codigo}</td><td>${p.descricao}</td><td>${p.frac}</td>`;
             for(let i=1;i<=8;i++) html+=`<td>${p[`preco${i}`]}</td>`;
             html+=`</tr>`;
         });
-        html+='</table>';
+        html+='</tr>';
         const blob = new Blob([html], { type: "application/vnd.ms-excel" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -997,7 +997,7 @@
     // ========== INICIALIZAÇÃO PÓS-LOGIN ==========
     function iniciarSistemaComNivel(nivel) {
         nivelReal = nivel;
-        nivelAtual = nivel;
+        nivelAtual = nivel;  // força o nível atual igual ao real
         carregarDados();
         gerarCamposPrecoModal();
         
@@ -1006,7 +1006,8 @@
         const importDiv = document.getElementById('importSection');
         if (importDiv) importDiv.style.display = podeImportar ? 'block' : 'none';
         
-        document.getElementById('perfilLabel').innerText = (nivel === 'admin' ? 'Admin' : (nivel === 'gerente' ? 'Gerente' : (nivel === 'vendedor1' ? 'Vendedor' : 'Representante')));
+        const nomePerfil = (nivel === 'admin' ? 'Admin' : (nivel === 'gerente' ? 'Gerente' : (nivel === 'vendedor1' ? 'Vendedor' : 'Representante')));
+        document.getElementById('perfilLabel').innerText = nomePerfil;
         document.getElementById('perfilDetalhe').innerText = nivel;
         
         atualizarVisibilidadePainel();
