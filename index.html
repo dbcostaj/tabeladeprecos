@@ -3,14 +3,11 @@
 <head>
     <link rel="icon" type="image/png" href="favicon.ico">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Tabela de Preços - Bioscare</title>
-    <!-- SheetJS para Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* (mantenha todos os estilos exatamente como você enviou - são os mesmos) */
         * {
             margin: 0;
             padding: 0;
@@ -24,10 +21,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 16px;
         }
 
-        /* ========== TELA DE LOGIN ========== */
+        /* ========== TELA DE LOGIN (centralizada) ========== */
         .login-container {
             width: 100%;
             max-width: 440px;
@@ -79,8 +76,8 @@
         }
         .login-input:focus {
             border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
             outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
         }
         .btn-login {
             width: 100%;
@@ -170,7 +167,7 @@
             cursor: pointer;
         }
 
-        /* Perfil - painel de simulação (será ocultado para vendedor/representante) */
+        /* Perfil */
         .profile-panel {
             background: white;
             border-radius: 20px;
@@ -244,20 +241,23 @@
             cursor: pointer;
         }
 
-        /* Tabela */
+        /* Tabela - correção de sticky e fundo */
         .table-wrapper {
             background: white;
             border-radius: 24px;
             overflow-x: auto;
+            position: relative;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
         }
         th, td {
             padding: 14px 16px;
             border-bottom: 1px solid #edf2f7;
             text-align: left;
+            background-color: white; /* fundo consistente */
         }
         th {
             background: #f8fafc;
@@ -270,12 +270,29 @@
         .inactive-row td {
             text-decoration: line-through;
         }
-        .inactive-row .actions {
-            text-decoration: none;
+        /* Colunas fixas com fundo consistente */
+        .sticky-col-1 {
+            position: sticky;
+            left: 0;
+            background-color: white;
+            z-index: 2;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
         }
-        .sticky-col-1 { position: sticky; left: 0; background: white; z-index: 2; }
-        .sticky-col-2 { position: sticky; left: 120px; background: white; z-index: 2; }
-        th.sticky-col-1, th.sticky-col-2 { background: #f8fafc; }
+        .sticky-col-2 {
+            position: sticky;
+            left: 80px; /* ajuste para não sobrepor */
+            background-color: white;
+            z-index: 2;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+        }
+        th.sticky-col-1, th.sticky-col-2 {
+            background-color: #f8fafc;
+            z-index: 3;
+        }
+        /* Para evitar buracos, garantir que as células não tenham background transparente */
+        td.sticky-col-1, td.sticky-col-2 {
+            background-color: white;
+        }
 
         /* Cards */
         .cards-wrapper { display: none; }
@@ -317,7 +334,7 @@
             cursor: pointer;
         }
 
-        /* MODAL */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -345,43 +362,12 @@
             max-height: 90vh;
             overflow-y: auto;
             padding: 28px;
-            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.2);
-        }
-        .modal-container h2 {
-            margin-bottom: 20px;
-            color: #1e3a8a;
-        }
-        .form-row {
-            margin-bottom: 16px;
-        }
-        .form-row label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        .form-row input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
         }
         .prices-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin: 20px 0;
-        }
-        .price-field input {
-            width: 100%;
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
-        }
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 20px;
         }
         .btn-save, .btn-cancel {
             padding: 10px 24px;
@@ -391,6 +377,9 @@
         }
         .btn-save { background: #16a34a; color: white; }
         .btn-cancel { background: #e2e8f0; color: #1e293b; }
+        .form-row { margin-bottom: 16px; }
+        .form-row label { display: block; font-weight: 600; margin-bottom: 6px; }
+        .form-row input { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
@@ -428,14 +417,13 @@
             <h1>Tabela de Preços</h1>
         </div>
         <div class="user-info">
-            <span><i class="fas fa-user"></i> <span id="perfilLabel">Admin</span></span>
+            <span><i class="fas fa-user"></i> <span id="perfilLabel"></span></span>
             <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
     </div>
 
-    <!-- PAINEL DE SIMULAÇÃO (será ocultado para vendedor/representante) -->
     <div class="profile-panel" id="profilePanel">
-        <div class="profile-badge">Perfil: <strong id="perfilDetalhe">admin</strong></div>
+        <div class="profile-badge">Perfil: <strong id="perfilDetalhe"></strong></div>
         <div class="btn-group">
             <button onclick="mudarNivel('admin')">⚙️ Admin</button>
             <button onclick="mudarNivel('gerente')">👔 Gerência</button>
@@ -525,70 +513,16 @@
 </div>
 
 <script>
-    // ========== AUTENTICAÇÃO POR E-MAIL ==========
+    // ========== AUTENTICAÇÃO ==========
     const usuarios = {
         "admin@empresa.com": { senha: "admin123", nivel: "admin" },
         "gerencia@empresa.com": { senha: "gerencia123", nivel: "gerente" },
         "vendedor@empresa.com": { senha: "vendedor123", nivel: "vendedor1" },
         "representante@empresa.com": { senha: "rep123", nivel: "vendedor2" }
     };
-
-    // Variável global que guarda o nível REAL do usuário logado (não o simulado)
     let nivelReal = 'admin';
-
-    function fazerLogin() {
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const senha = document.getElementById('loginSenha').value;
-        const errorDiv = document.getElementById('loginError');
-        if (!usuarios[email] || usuarios[email].senha !== senha) {
-            errorDiv.style.display = 'block';
-            errorDiv.innerText = 'E-mail ou senha inválidos.';
-            return;
-        }
-        const nivel = usuarios[email].nivel;
-        sessionStorage.setItem('usuarioEmail', email);
-        sessionStorage.setItem('nivelAcesso', nivel);
-        nivelReal = nivel;  // armazena o nível real
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('systemContainer').style.display = 'block';
-        iniciarSistemaComNivel(nivel);
-    }
-
-    function logout() {
-        sessionStorage.clear();
-        document.getElementById('loginContainer').style.display = 'flex';
-        document.getElementById('systemContainer').style.display = 'none';
-    }
-
-    function verificarSessao() {
-        const email = sessionStorage.getItem('usuarioEmail');
-        if (email && usuarios[email]) {
-            const nivel = usuarios[email].nivel;
-            nivelReal = nivel;
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('systemContainer').style.display = 'block';
-            iniciarSistemaComNivel(nivel);
-        } else {
-            document.getElementById('loginContainer').style.display = 'flex';
-            document.getElementById('systemContainer').style.display = 'none';
-        }
-    }
-
-    // Função que controla a visibilidade do painel de simulação (profile-panel)
-    function atualizarVisibilidadePainel() {
-        const panel = document.getElementById('profilePanel');
-        if (!panel) return;
-        // Painel visível apenas se o nível REAL for admin ou gerente
-        if (nivelReal === 'admin' || nivelReal === 'gerente') {
-            panel.style.display = 'flex';
-        } else {
-            panel.style.display = 'none';
-        }
-    }
-
-    // ========== DADOS GLOBAIS ==========
-    let produtos = [];
     let nivelAtual = 'admin';
+    let produtos = [];
     let filtroTexto = '';
     let colunaOrdenacao = 'codigo';
     let ordemAscendente = true;
@@ -604,72 +538,8 @@
         { codigo: "205", descricao: "Café Torrado 500g", frac: "Un", preco1:14.20, preco2:14.50, preco3:14.80, preco4:15.10, preco5:15.50, preco6:15.80, preco7:16.10, preco8:16.40, ativo: true }
     ];
 
-    function carregarDados() {
-        const local = localStorage.getItem('produtosPrecos');
-        if (local) produtos = JSON.parse(local);
-        else produtos = JSON.parse(JSON.stringify(dadosIniciais));
-    }
+    function carregarDados() { const local = localStorage.getItem('produtosPrecos'); if(local) produtos = JSON.parse(local); else produtos = JSON.parse(JSON.stringify(dadosIniciais)); }
     function salvarLocalStorage() { localStorage.setItem('produtosPrecos', JSON.stringify(produtos)); }
-
-    // ========== ORDENAÇÃO E FILTRO ==========
-    function ordenarProdutos(lista) {
-        return [...lista].sort((a, b) => {
-            let aVal, bVal;
-            if (colunaOrdenacao === 'codigo') { aVal = a.codigo; bVal = b.codigo; }
-            else if (colunaOrdenacao === 'descricao') { aVal = a.descricao; bVal = b.descricao; }
-            else if (colunaOrdenacao.startsWith('preco')) { aVal = a[colunaOrdenacao] || 0; bVal = b[colunaOrdenacao] || 0; }
-            else return 0;
-            if (typeof aVal === 'string') return ordemAscendente ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-            else return ordemAscendente ? aVal - bVal : bVal - aVal;
-        });
-    }
-    function aplicarOrdenacao(coluna) {
-        if (colunaOrdenacao === coluna) ordemAscendente = !ordemAscendente;
-        else { colunaOrdenacao = coluna; ordemAscendente = true; }
-        paginaAtual = 1;
-        atualizarVisualizacaoCompleta();
-    }
-    function aplicarFiltro() {
-        filtroTexto = document.getElementById('searchInput').value.toLowerCase();
-        paginaAtual = 1;
-        atualizarVisualizacaoCompleta();
-    }
-    function getProdutosFiltradosOrdenados() {
-        let filtrados = produtos.filter(p => p.codigo.toLowerCase().includes(filtroTexto) || p.descricao.toLowerCase().includes(filtroTexto));
-        return ordenarProdutos(filtrados);
-    }
-    function getPaginaAtual(lista) {
-        const inicio = (paginaAtual - 1) * itensPorPagina;
-        return lista.slice(inicio, inicio + itensPorPagina);
-    }
-    function atualizarPaginacaoControles(totalItens) {
-        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
-        document.getElementById('pageInfo').innerText = `Página ${paginaAtual} de ${totalPaginas}`;
-        document.getElementById('btnPrimeira').disabled = (paginaAtual === 1);
-        document.getElementById('btnAnterior').disabled = (paginaAtual === 1);
-        document.getElementById('btnProxima').disabled = (paginaAtual === totalPaginas);
-        document.getElementById('btnUltima').disabled = (paginaAtual === totalPaginas);
-    }
-    function irParaPagina(pag) {
-        const totalItens = getProdutosFiltradosOrdenados().length;
-        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
-        if (pag < 1) pag = 1;
-        if (pag > totalPaginas) pag = totalPaginas;
-        paginaAtual = pag;
-        atualizarVisualizacaoCompleta();
-    }
-    function paginaAnterior() { irParaPagina(paginaAtual - 1); }
-    function proximaPagina() { irParaPagina(paginaAtual + 1); }
-    function irParaUltimaPagina() {
-        const totalItens = getProdutosFiltradosOrdenados().length;
-        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
-        irParaPagina(totalPaginas);
-    }
-    function mudarItensPorPagina() {
-        itensPorPagina = parseInt(document.getElementById('perPageSelect').value);
-        paginaAtual = 1;
-        atualizarVisualizacaoCompleta();
-    }
 
     function determinarColunasPreco() {
         if (nivelAtual === 'admin' || nivelAtual === 'gerente') return [1,2,3,4,5,6,7,8];
@@ -677,6 +547,43 @@
         if (nivelAtual === 'vendedor2') return [5,6,7,8];
         return [];
     }
+
+    function ordenarProdutos(lista) {
+        return [...lista].sort((a,b) => {
+            let aVal,bVal;
+            if(colunaOrdenacao === 'codigo') { aVal = a.codigo; bVal = b.codigo; }
+            else if(colunaOrdenacao === 'descricao') { aVal = a.descricao; bVal = b.descricao; }
+            else if(colunaOrdenacao.startsWith('preco')) { aVal = a[colunaOrdenacao] || 0; bVal = b[colunaOrdenacao] || 0; }
+            else return 0;
+            if(typeof aVal === 'string') return ordemAscendente ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            else return ordemAscendente ? aVal - bVal : bVal - aVal;
+        });
+    }
+    function aplicarOrdenacao(coluna) {
+        if(colunaOrdenacao === coluna) ordemAscendente = !ordemAscendente;
+        else { colunaOrdenacao = coluna; ordemAscendente = true; }
+        paginaAtual = 1;
+        atualizarVisualizacaoCompleta();
+    }
+    function aplicarFiltro() { filtroTexto = document.getElementById('searchInput').value.toLowerCase(); paginaAtual = 1; atualizarVisualizacaoCompleta(); }
+    function getProdutosFiltradosOrdenados() {
+        let filtrados = produtos.filter(p => p.codigo.toLowerCase().includes(filtroTexto) || p.descricao.toLowerCase().includes(filtroTexto));
+        return ordenarProdutos(filtrados);
+    }
+    function getPaginaAtual(lista) { const inicio = (paginaAtual-1)*itensPorPagina; return lista.slice(inicio, inicio+itensPorPagina); }
+    function atualizarPaginacaoControles(totalItens) {
+        const totalPaginas = Math.ceil(totalItens/itensPorPagina)||1;
+        document.getElementById('pageInfo').innerText = `Página ${paginaAtual} de ${totalPaginas}`;
+        document.getElementById('btnPrimeira').disabled = (paginaAtual===1);
+        document.getElementById('btnAnterior').disabled = (paginaAtual===1);
+        document.getElementById('btnProxima').disabled = (paginaAtual===totalPaginas);
+        document.getElementById('btnUltima').disabled = (paginaAtual===totalPaginas);
+    }
+    function irParaPagina(pag) { const totalItens = getProdutosFiltradosOrdenados().length; const totalPaginas = Math.ceil(totalItens/itensPorPagina)||1; if(pag<1) pag=1; if(pag>totalPaginas) pag=totalPaginas; paginaAtual=pag; atualizarVisualizacaoCompleta(); }
+    function paginaAnterior() { irParaPagina(paginaAtual-1); }
+    function proximaPagina() { irParaPagina(paginaAtual+1); }
+    function irParaUltimaPagina() { const totalItens = getProdutosFiltradosOrdenados().length; const totalPaginas = Math.ceil(totalItens/itensPorPagina)||1; irParaPagina(totalPaginas); }
+    function mudarItensPorPagina() { itensPorPagina = parseInt(document.getElementById('perPageSelect').value); paginaAtual=1; atualizarVisualizacaoCompleta(); }
 
     function renderizarTabela() {
         const thead = document.getElementById('tabelaHead');
@@ -691,7 +598,7 @@
         const createTh = (texto, coluna, classe) => {
             const th = document.createElement('th');
             th.textContent = texto;
-            if (classe) th.className = classe;
+            if(classe) th.className = classe;
             th.style.cursor = 'pointer';
             th.onclick = () => aplicarOrdenacao(coluna);
             return th;
@@ -699,65 +606,26 @@
         headerRow.appendChild(createTh('Código', 'codigo', 'sticky-col-1'));
         headerRow.appendChild(createTh('Descrição', 'descricao', 'sticky-col-2'));
         headerRow.appendChild(createTh('Frac.', null));
-        colunasPreco.forEach(i => {
-            headerRow.appendChild(createTh(`Tab ${i}`, `preco${i}`, ''));
-        });
+        colunasPreco.forEach(i => { headerRow.appendChild(createTh(`Tab ${i}`, `preco${i}`, '')); });
         const podeEditar = (nivelAtual === 'admin' || nivelAtual === 'gerente');
-        if (podeEditar) {
-            const thAcoes = document.createElement('th');
-            thAcoes.textContent = 'Ações';
-            headerRow.appendChild(thAcoes);
-        }
+        if(podeEditar) { const thAcoes = document.createElement('th'); thAcoes.textContent = 'Ações'; headerRow.appendChild(thAcoes); }
         thead.appendChild(headerRow);
 
         tbody.innerHTML = '';
         listaPagina.forEach(prod => {
             const row = tbody.insertRow();
-            if (!prod.ativo) row.classList.add('inactive-row');
-            const cellCod = row.insertCell(0);
-            cellCod.textContent = prod.codigo;
-            cellCod.classList.add('sticky-col-1');
-            const cellDesc = row.insertCell(1);
-            cellDesc.textContent = prod.descricao;
-            cellDesc.classList.add('sticky-col-2');
-            const cellFrac = row.insertCell(2);
-            cellFrac.textContent = prod.frac;
-            colunasPreco.forEach(i => {
-                const cell = row.insertCell();
-                cell.textContent = (prod[`preco${i}`] || 0).toFixed(2);
-            });
-            if (podeEditar) {
+            if(!prod.ativo) row.classList.add('inactive-row');
+            const cellCod = row.insertCell(0); cellCod.textContent = prod.codigo; cellCod.classList.add('sticky-col-1');
+            const cellDesc = row.insertCell(1); cellDesc.textContent = prod.descricao; cellDesc.classList.add('sticky-col-2');
+            const cellFrac = row.insertCell(2); cellFrac.textContent = prod.frac;
+            colunasPreco.forEach(i => { const cell = row.insertCell(); cell.textContent = (prod[`preco${i}`]||0).toFixed(2); });
+            if(podeEditar) {
                 const cellActions = row.insertCell();
-                cellActions.classList.add('actions');
-                const btnEditar = document.createElement('button');
-                btnEditar.textContent = 'Editar';
-                btnEditar.className = 'btn-edit';
-                btnEditar.style.background = '#ca8a04';
-                btnEditar.style.color = 'white';
-                btnEditar.style.padding = '4px 10px';
-                btnEditar.style.borderRadius = '20px';
-                btnEditar.style.border = 'none';
-                btnEditar.style.cursor = 'pointer';
+                const btnEditar = document.createElement('button'); btnEditar.textContent='Editar'; btnEditar.style.cssText='background:#ca8a04; color:white; padding:4px 10px; border-radius:20px; border:none; margin-right:5px; cursor:pointer;';
                 btnEditar.onclick = () => abrirModal(prod.codigo);
-                const btnExcluir = document.createElement('button');
-                btnExcluir.textContent = 'Excluir';
-                btnExcluir.className = 'btn-delete';
-                btnExcluir.style.background = '#dc2626';
-                btnExcluir.style.color = 'white';
-                btnExcluir.style.padding = '4px 10px';
-                btnExcluir.style.borderRadius = '20px';
-                btnExcluir.style.border = 'none';
-                btnExcluir.style.cursor = 'pointer';
+                const btnExcluir = document.createElement('button'); btnExcluir.textContent='Excluir'; btnExcluir.style.cssText='background:#dc2626; color:white; padding:4px 10px; border-radius:20px; border:none; margin-right:5px; cursor:pointer;';
                 btnExcluir.onclick = () => excluirProduto(prod.codigo);
-                const btnStatus = document.createElement('button');
-                btnStatus.textContent = prod.ativo ? 'Inativar' : 'Ativar';
-                btnStatus.className = 'btn-status';
-                btnStatus.style.background = '#64748b';
-                btnStatus.style.color = 'white';
-                btnStatus.style.padding = '4px 10px';
-                btnStatus.style.borderRadius = '20px';
-                btnStatus.style.border = 'none';
-                btnStatus.style.cursor = 'pointer';
+                const btnStatus = document.createElement('button'); btnStatus.textContent = prod.ativo ? 'Inativar' : 'Ativar'; btnStatus.style.cssText='background:#64748b; color:white; padding:4px 10px; border-radius:20px; border:none; cursor:pointer;';
                 btnStatus.onclick = () => toggleStatusProduto(prod.codigo);
                 cellActions.append(btnEditar, btnExcluir, btnStatus);
             }
@@ -773,31 +641,19 @@
         container.innerHTML = '';
         const podeEditar = (nivelAtual === 'admin' || nivelAtual === 'gerente');
         listaPagina.forEach(prod => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            if (!prod.ativo) card.classList.add('inactive');
+            const card = document.createElement('div'); card.className = 'product-card'; if(!prod.ativo) card.classList.add('inactive');
             let precoHtml = '<div class="card-prices">';
-            colunasPreco.forEach(i => {
-                precoHtml += `<div class="price-item"><strong>Tab ${i}</strong><br>R$ ${(prod[`preco${i}`] || 0).toFixed(2)}</div>`;
-            });
+            colunasPreco.forEach(i => { precoHtml += `<div class="price-item"><strong>Tab ${i}</strong><br>R$ ${(prod[`preco${i}`]||0).toFixed(2)}</div>`; });
             precoHtml += '</div>';
             let acoesHtml = '';
-            if (podeEditar) {
+            if(podeEditar) {
                 acoesHtml = `<div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
                     <button onclick="abrirModal('${prod.codigo}')" style="background:#ca8a04; color:white; border:none; padding:6px 12px; border-radius:20px;">Editar</button>
                     <button onclick="excluirProduto('${prod.codigo}')" style="background:#dc2626; color:white; border:none; padding:6px 12px; border-radius:20px;">Excluir</button>
                     <button onclick="toggleStatusProduto('${prod.codigo}')" style="background:#64748b; color:white; border:none; padding:6px 12px; border-radius:20px;">${prod.ativo ? 'Inativar' : 'Ativar'}</button>
                 </div>`;
             }
-            card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid #e2e8f0; padding-bottom:8px; margin-bottom:12px;">
-                    <span>${prod.codigo}</span>
-                    <span>${prod.frac}</span>
-                </div>
-                <div style="font-weight:600; margin-bottom:8px;">${prod.descricao}</div>
-                ${precoHtml}
-                ${acoesHtml}
-            `;
+            card.innerHTML = `<div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid #e2e8f0; padding-bottom:8px; margin-bottom:12px;"><span>${prod.codigo}</span><span>${prod.frac}</span></div><div style="font-weight:600; margin-bottom:8px;">${prod.descricao}</div>${precoHtml}${acoesHtml}`;
             container.appendChild(card);
         });
     }
@@ -806,217 +662,77 @@
         visualizacaoCards = !visualizacaoCards;
         const tableView = document.getElementById('tableView');
         const cardsView = document.getElementById('cardsView');
-        if (visualizacaoCards) {
-            tableView.style.display = 'none';
-            cardsView.classList.add('active');
-            renderizarCards();
-        } else {
-            tableView.style.display = 'block';
-            cardsView.classList.remove('active');
-            renderizarTabela();
-        }
+        if(visualizacaoCards) { tableView.style.display = 'none'; cardsView.classList.add('active'); renderizarCards(); }
+        else { tableView.style.display = 'block'; cardsView.classList.remove('active'); renderizarTabela(); }
     }
-
-    function atualizarVisualizacaoCompleta() {
-        if (visualizacaoCards) renderizarCards();
-        else renderizarTabela();
-    }
+    function atualizarVisualizacaoCompleta() { if(visualizacaoCards) renderizarCards(); else renderizarTabela(); }
 
     function mudarNivel(nivel) {
-        // Só permite mudar o nível simulado se o usuário REAL for admin ou gerente
-        if (nivelReal !== 'admin' && nivelReal !== 'gerente') return;
+        if(nivelReal !== 'admin' && nivelReal !== 'gerente') return;
         nivelAtual = nivel;
         const importDiv = document.getElementById('importSection');
-        if (importDiv) importDiv.style.display = (nivel === 'admin') ? 'block' : 'none';
-        document.getElementById('perfilLabel').innerText = nivel === 'admin' ? 'Admin' : (nivel === 'gerente' ? 'Gerente' : (nivel === 'vendedor1' ? 'Vendedor' : 'Representante'));
+        if(importDiv) importDiv.style.display = (nivel === 'admin') ? 'block' : 'none';
+        document.getElementById('perfilLabel').innerText = (nivel === 'admin' ? 'Admin' : (nivel === 'gerente' ? 'Gerente' : (nivel === 'vendedor1' ? 'Vendedor' : 'Representante')));
         document.getElementById('perfilDetalhe').innerText = nivel;
         paginaAtual = 1;
         atualizarVisualizacaoCompleta();
     }
 
-    // ========== CRUD ==========
-    function abrirModal(codigo) {
-        if (nivelAtual !== 'admin' && nivelAtual !== 'gerente') return;
-        const produto = produtos.find(p => p.codigo === codigo);
-        if (!produto) return;
-        window.produtoEditandoCodigo = codigo;
-        document.getElementById('editCodigo').value = produto.codigo;
-        document.getElementById('editDescricao').value = produto.descricao;
-        document.getElementById('editFrac').value = produto.frac;
-        for (let i = 1; i <= 8; i++) {
-            const input = document.getElementById(`editPreco${i}`);
-            if (input) input.value = produto[`preco${i}`];
-        }
-        document.getElementById('editModal').classList.add('active');
-    }
-    function fecharModal() { document.getElementById('editModal').classList.remove('active'); window.produtoEditandoCodigo = null; }
-    function salvarEdicao() {
-        if (!window.produtoEditandoCodigo) return;
-        const index = produtos.findIndex(p => p.codigo === window.produtoEditandoCodigo);
-        if (index === -1) return;
-        const descricao = document.getElementById('editDescricao').value.trim();
-        if (!descricao) { alert('Descrição obrigatória'); return; }
-        const frac = document.getElementById('editFrac').value.trim();
-        const novosPrecos = {};
-        let valido = true;
-        for (let i = 1; i <= 8; i++) {
-            const val = parseFloat(document.getElementById(`editPreco${i}`).value);
-            if (isNaN(val) || val < 0) { alert(`Preço da Tab ${i} inválido (deve ser número >= 0)`); valido = false; break; }
-            novosPrecos[`preco${i}`] = val;
-        }
-        if (!valido) return;
-        produtos[index] = { ...produtos[index], descricao, frac, ...novosPrecos };
-        salvarLocalStorage();
-        fecharModal();
-        atualizarVisualizacaoCompleta();
-    }
-    function excluirProduto(codigo) {
-        if (nivelAtual !== 'admin' && nivelAtual !== 'gerente') return;
-        if (confirm(`Excluir ${codigo}?`)) {
-            produtos = produtos.filter(p => p.codigo !== codigo);
-            salvarLocalStorage();
-            if (produtos.length === 0 && paginaAtual > 1) paginaAtual--;
-            atualizarVisualizacaoCompleta();
-        }
-    }
-    function toggleStatusProduto(codigo) {
-        if (nivelAtual !== 'admin' && nivelAtual !== 'gerente') return;
-        const produto = produtos.find(p => p.codigo === codigo);
-        if (produto) {
-            produto.ativo = !produto.ativo;
-            salvarLocalStorage();
-            atualizarVisualizacaoCompleta();
-        }
+    function atualizarVisibilidadePainel() {
+        const panel = document.getElementById('profilePanel');
+        if(panel) panel.style.display = (nivelReal === 'admin' || nivelReal === 'gerente') ? 'flex' : 'none';
     }
 
-    // ========== IMPORTAÇÃO ==========
-    function processarImportacao() {
-        if (nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; }
-        const csvText = document.getElementById('csvInput').value;
-        const linhas = csvText.trim().split(/\r?\n/);
-        let adicionados = 0, atualizados = 0;
-        for (let linha of linhas) {
-            const partes = linha.split(';');
-            if (partes.length !== 11) continue;
-            const codigo = partes[0].trim();
-            const descricao = partes[1].trim();
-            const frac = partes[2].trim();
-            const precos = partes.slice(3).map(v => parseFloat(v.replace(',', '.')));
-            if (precos.some(isNaN)) continue;
-            const novoProduto = {
-                codigo, descricao, frac,
-                preco1: precos[0], preco2: precos[1], preco3: precos[2], preco4: precos[3],
-                preco5: precos[4], preco6: precos[5], preco7: precos[6], preco8: precos[7],
-                ativo: true
-            };
-            const idx = produtos.findIndex(p => p.codigo === codigo);
-            if (idx !== -1) { produtos[idx] = { ...novoProduto, ativo: produtos[idx].ativo }; atualizados++; }
-            else { produtos.push(novoProduto); adicionados++; }
-        }
-        alert(`CSV: ${adicionados} novos, ${atualizados} atualizados.`);
-        salvarLocalStorage();
-        paginaAtual = 1;
-        atualizarVisualizacaoCompleta();
+    function abrirModal(codigo) { if(nivelAtual !== 'admin' && nivelAtual !== 'gerente') return; const produto = produtos.find(p=>p.codigo===codigo); if(!produto) return; window.produtoEditandoCodigo=codigo; document.getElementById('editCodigo').value=produto.codigo; document.getElementById('editDescricao').value=produto.descricao; document.getElementById('editFrac').value=produto.frac; for(let i=1;i<=8;i++){ const input = document.getElementById(`editPreco${i}`); if(input) input.value=produto[`preco${i}`]; } document.getElementById('editModal').classList.add('active'); }
+    function fecharModal() { document.getElementById('editModal').classList.remove('active'); window.produtoEditandoCodigo=null; }
+    function salvarEdicao() { if(!window.produtoEditandoCodigo) return; const index = produtos.findIndex(p=>p.codigo===window.produtoEditandoCodigo); if(index===-1) return; const descricao = document.getElementById('editDescricao').value.trim(); if(!descricao) { alert('Descrição obrigatória'); return; } const frac = document.getElementById('editFrac').value.trim(); const novosPrecos = {}; let valido=true; for(let i=1;i<=8;i++){ const val = parseFloat(document.getElementById(`editPreco${i}`).value); if(isNaN(val) || val<0) { alert(`Preço Tab ${i} inválido`); valido=false; break; } novosPrecos[`preco${i}`]=val; } if(!valido) return; produtos[index]={...produtos[index], descricao, frac, ...novosPrecos}; salvarLocalStorage(); fecharModal(); atualizarVisualizacaoCompleta(); }
+    function excluirProduto(codigo) { if(nivelAtual !== 'admin' && nivelAtual !== 'gerente') return; if(confirm(`Excluir ${codigo}?`)) { produtos = produtos.filter(p=>p.codigo!==codigo); salvarLocalStorage(); if(produtos.length===0 && paginaAtual>1) paginaAtual--; atualizarVisualizacaoCompleta(); } }
+    function toggleStatusProduto(codigo) { if(nivelAtual !== 'admin' && nivelAtual !== 'gerente') return; const produto = produtos.find(p=>p.codigo===codigo); if(produto) { produto.ativo = !produto.ativo; salvarLocalStorage(); atualizarVisualizacaoCompleta(); } }
+
+    function processarImportacao() { if(nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; } const csvText = document.getElementById('csvInput').value; const linhas = csvText.trim().split(/\r?\n/); let adicionados=0, atualizados=0; for(let linha of linhas){ const partes = linha.split(';'); if(partes.length!==11) continue; const codigo=partes[0].trim(), descricao=partes[1].trim(), frac=partes[2].trim(), precos=partes.slice(3).map(v=>parseFloat(v.replace(',','.'))); if(precos.some(isNaN)) continue; const novoProduto={codigo,descricao,frac, preco1:precos[0],preco2:precos[1],preco3:precos[2],preco4:precos[3],preco5:precos[4],preco6:precos[5],preco7:precos[6],preco8:precos[7], ativo:true}; const idx=produtos.findIndex(p=>p.codigo===codigo); if(idx!==-1){ produtos[idx]={...novoProduto, ativo:produtos[idx].ativo}; atualizados++; } else { produtos.push(novoProduto); adicionados++; } } alert(`CSV: ${adicionados} novos, ${atualizados} atualizados.`); salvarLocalStorage(); paginaAtual=1; atualizarVisualizacaoCompleta(); }
+    function importarArquivoExcel(file) { if(!file) return; if(nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; } const reader = new FileReader(); reader.onload = function(e){ const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data,{type:'array'}); const primeiraPlanilha = workbook.Sheets[workbook.SheetNames[0]]; const linhas = XLSX.utils.sheet_to_json(primeiraPlanilha,{header:1,defval:""}); if(!linhas||linhas.length===0){ alert('Arquivo vazio'); return; } let adicionados=0, atualizados=0; for(let i=1;i<linhas.length;i++){ const linha=linhas[i]; if(linha.length<11) continue; const codigo=String(linha[0]||"").trim(), descricao=String(linha[1]||"").trim(), frac=String(linha[2]||"").trim(); const precos=[]; for(let j=3;j<=10;j++){ let val=parseFloat(linha[j]); if(isNaN(val)) val=0; precos.push(val); } if(codigo===""||descricao==="") continue; const novoProduto={codigo,descricao,frac, preco1:precos[0],preco2:precos[1],preco3:precos[2],preco4:precos[3],preco5:precos[4],preco6:precos[5],preco7:precos[6],preco8:precos[7], ativo:true}; const idx=produtos.findIndex(p=>p.codigo===codigo); if(idx!==-1){ produtos[idx]={...novoProduto, ativo:produtos[idx].ativo}; atualizados++; } else { produtos.push(novoProduto); adicionados++; } } alert(`Excel: ${adicionados} novos, ${atualizados} atualizados.`); salvarLocalStorage(); paginaAtual=1; atualizarVisualizacaoCompleta(); }; reader.readAsArrayBuffer(file); }
+
+    function exportarCSV() { let csvRows = [["Código;Descrição;Frac;Tab1;Tab2;Tab3;Tab4;Tab5;Tab6;Tab7;Tab8"]]; produtos.forEach(p=>{ csvRows.push(`${p.codigo};${p.descricao};${p.frac};${p.preco1};${p.preco2};${p.preco3};${p.preco4};${p.preco5};${p.preco6};${p.preco7};${p.preco8}`); }); const blob = new Blob([csvRows.join("\n")],{type:"text/csv;charset=utf-8"}); const link = document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="precos.csv"; link.click(); URL.revokeObjectURL(link.href); }
+    function exportarExcel() { let html = '<table border="1"><tr><th>Código</th><th>Descrição</th><th>Frac</th>'; for(let i=1;i<=8;i++) html+=`<th>Tab${i}</th>`; html+='</tr>'; produtos.forEach(p=>{ html+=`<tr><td>${p.codigo}</td><td>${p.descricao}</td><td>${p.frac}</td>`; for(let i=1;i<=8;i++) html+=`<td>${p[`preco${i}`]}</td>`; html+=`</tr>`; }); html+='</table>'; const blob = new Blob([html],{type:"application/vnd.ms-excel"}); const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="precos.xls"; link.click(); URL.revokeObjectURL(link.href); }
+
+    function gerarCamposPrecoModal() { const container = document.getElementById('pricesGrid'); container.innerHTML = ''; for(let i=1;i<=8;i++){ const div = document.createElement('div'); div.className='price-field'; div.innerHTML=`<label>Tab ${i}</label><input type="number" step="0.01" min="0" id="editPreco${i}" class="form-input" value="0">`; container.appendChild(div); } }
+
+    function fazerLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const senha = document.getElementById('loginSenha').value;
+        const errorDiv = document.getElementById('loginError');
+        if(!usuarios[email] || usuarios[email].senha !== senha) { errorDiv.style.display='block'; errorDiv.innerText='E-mail ou senha inválidos.'; return; }
+        const nivel = usuarios[email].nivel;
+        sessionStorage.setItem('usuarioEmail', email);
+        sessionStorage.setItem('nivelAcesso', nivel);
+        nivelReal = nivel;
+        nivelAtual = nivel;
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('systemContainer').style.display = 'block';
+        iniciarSistemaComNivel(nivel);
     }
 
-    function importarArquivoExcel(file) {
-        if (!file) return;
-        if (nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const primeiraPlanilha = workbook.Sheets[workbook.SheetNames[0]];
-            const linhas = XLSX.utils.sheet_to_json(primeiraPlanilha, { header: 1, defval: "" });
-            if (!linhas || linhas.length === 0) { alert('Arquivo vazio.'); return; }
-            let adicionados = 0, atualizados = 0;
-            for (let i = 1; i < linhas.length; i++) {
-                const linha = linhas[i];
-                if (linha.length < 11) continue;
-                const codigo = String(linha[0] || "").trim();
-                const descricao = String(linha[1] || "").trim();
-                const frac = String(linha[2] || "").trim();
-                const precos = [];
-                for (let j = 3; j <= 10; j++) {
-                    let val = parseFloat(linha[j]);
-                    if (isNaN(val)) val = 0;
-                    precos.push(val);
-                }
-                if (codigo === "" || descricao === "") continue;
-                const novoProduto = {
-                    codigo, descricao, frac,
-                    preco1: precos[0], preco2: precos[1], preco3: precos[2], preco4: precos[3],
-                    preco5: precos[4], preco6: precos[5], preco7: precos[6], preco8: precos[7],
-                    ativo: true
-                };
-                const idx = produtos.findIndex(p => p.codigo === codigo);
-                if (idx !== -1) { produtos[idx] = { ...novoProduto, ativo: produtos[idx].ativo }; atualizados++; }
-                else { produtos.push(novoProduto); adicionados++; }
-            }
-            alert(`Excel: ${adicionados} novos, ${atualizados} atualizados.`);
-            salvarLocalStorage();
-            paginaAtual = 1;
-            atualizarVisualizacaoCompleta();
-        };
-        reader.readAsArrayBuffer(file);
-    }
+    function logout() { sessionStorage.clear(); document.getElementById('loginContainer').style.display='flex'; document.getElementById('systemContainer').style.display='none'; }
 
-    // ========== EXPORTAÇÃO ==========
-    function exportarCSV() {
-        let csvRows = [["Código;Descrição;Frac;Tab1;Tab2;Tab3;Tab4;Tab5;Tab6;Tab7;Tab8"]];
-        produtos.forEach(p => {
-            csvRows.push(`${p.codigo};${p.descricao};${p.frac};${p.preco1};${p.preco2};${p.preco3};${p.preco4};${p.preco5};${p.preco6};${p.preco7};${p.preco8}`);
-        });
-        const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = "precos.csv";
-        link.click();
-        URL.revokeObjectURL(url);
-    }
-    function exportarExcel() {
-        let html = '<table border="1"><tr><th>Código</th><th>Descrição</th><th>Frac</th>';
-        for (let i=1;i<=8;i++) html+=`<th>Tab${i}</th>`;
-        html+='</tr>';
-        produtos.forEach(p => {
-            html+=`<tr><td>${p.codigo}</td><td>${p.descricao}</td><td>${p.frac}</td>`;
-            for(let i=1;i<=8;i++) html+=`<td>${p[`preco${i}`]}</td>`;
-            html+=`</tr>`;
-        });
-        html+='</table>';
-        const blob = new Blob([html], { type: "application/vnd.ms-excel" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "precos.xls";
-        link.click();
-        URL.revokeObjectURL(blob);
-    }
-
-    function gerarCamposPrecoModal() {
-        const container = document.getElementById('pricesGrid');
-        container.innerHTML = '';
-        for (let i = 1; i <= 8; i++) {
-            const div = document.createElement('div');
-            div.className = 'price-field';
-            div.innerHTML = `<label>Tab ${i}</label><input type="number" step="0.01" min="0" id="editPreco${i}" class="form-input" value="0">`;
-            container.appendChild(div);
-        }
-    }
+    function verificarSessao() { const email = sessionStorage.getItem('usuarioEmail'); if(email && usuarios[email]){ const nivel = usuarios[email].nivel; nivelReal = nivel; nivelAtual = nivel; document.getElementById('loginContainer').style.display='none'; document.getElementById('systemContainer').style.display='block'; iniciarSistemaComNivel(nivel); } else { document.getElementById('loginContainer').style.display='flex'; document.getElementById('systemContainer').style.display='none'; } }
 
     function iniciarSistemaComNivel(nivel) {
-        nivelReal = nivel;               // guarda o perfil verdadeiro
         carregarDados();
         gerarCamposPrecoModal();
-        mudarNivel(nivel);               // inicializa a visualização com o nível real
+        nivelReal = nivel;
+        nivelAtual = nivel;
+        const podeImportar = (nivel === 'admin');
+        const importDiv = document.getElementById('importSection');
+        if(importDiv) importDiv.style.display = podeImportar ? 'block' : 'none';
+        document.getElementById('perfilLabel').innerText = (nivel==='admin'?'Admin':(nivel==='gerente'?'Gerente':(nivel==='vendedor1'?'Vendedor':'Representante')));
+        document.getElementById('perfilDetalhe').innerText = nivel;
+        atualizarVisibilidadePainel();
         visualizacaoCards = false;
         document.getElementById('tableView').style.display = 'block';
         document.getElementById('cardsView').classList.remove('active');
-        atualizarVisibilidadePainel();   // oculta ou mostra o painel de simulação
         atualizarVisualizacaoCompleta();
     }
 
-    // Inicializa a verificação de sessão
     verificarSessao();
 </script>
 </body>
