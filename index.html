@@ -3,7 +3,7 @@
 <head>
     <link rel="icon" type="image/png" href="favicon.ico">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Tabela de Preços - Bioscare</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -21,10 +21,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 20px;
         }
 
-        /* ========== TELA DE LOGIN (centralizada) ========== */
+        /* ========== TELA DE LOGIN ========== */
         .login-container {
             width: 100%;
             max-width: 440px;
@@ -36,9 +36,6 @@
             padding: 40px 32px;
             box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
             text-align: center;
-        }
-        .login-logo {
-            margin-bottom: 24px;
         }
         .login-logo img {
             max-width: 180px;
@@ -76,8 +73,8 @@
         }
         .login-input:focus {
             border-color: #3b82f6;
-            outline: none;
             box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            outline: none;
         }
         .btn-login {
             width: 100%;
@@ -167,7 +164,7 @@
             cursor: pointer;
         }
 
-        /* Perfil */
+        /* Painel de perfil (só admin/gerente) */
         .profile-panel {
             background: white;
             border-radius: 20px;
@@ -177,6 +174,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 12px;
         }
         .profile-badge {
             background: #eef2ff;
@@ -184,15 +182,25 @@
             border-radius: 30px;
             font-weight: 600;
         }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
         .btn-group button {
             padding: 8px 18px;
             border-radius: 30px;
             border: none;
-            margin-left: 8px;
+            background: #f1f5f9;
             cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-group button:hover {
+            background: #e2e8f0;
         }
 
-        /* Pesquisa */
+        /* Barra de pesquisa */
         .search-section {
             background: white;
             border-radius: 20px;
@@ -208,6 +216,11 @@
             padding: 12px 18px;
             border-radius: 40px;
             border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
         }
         .action-buttons button {
             padding: 10px 18px;
@@ -215,14 +228,18 @@
             border: none;
             background: #f1f5f9;
             cursor: pointer;
+            font-weight: 500;
         }
 
-        /* Importador */
+        /* Importador (só admin) */
         .import-section {
             background: white;
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 24px;
+        }
+        .import-section h3 {
+            margin-bottom: 12px;
         }
         textarea {
             width: 100%;
@@ -230,6 +247,7 @@
             border: 1px solid #cbd5e1;
             padding: 12px;
             font-family: monospace;
+            font-size: 0.85rem;
             margin-bottom: 12px;
         }
         .btn-import, .btn-import-excel {
@@ -241,28 +259,52 @@
             cursor: pointer;
         }
 
-        /* Tabela - correção de sticky e fundo */
+        /* Tabela com rolagem vertical e horizontal */
         .table-wrapper {
             background: white;
             border-radius: 24px;
             overflow-x: auto;
+            overflow-y: auto;
+            max-height: 70vh;
             position: relative;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
         }
         th, td {
             padding: 14px 16px;
             border-bottom: 1px solid #edf2f7;
             text-align: left;
-            background-color: white; /* fundo consistente */
+            white-space: nowrap;
         }
         th {
             background: #f8fafc;
             font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
+        /* Sticky columns - corrigido sem buracos */
+        .sticky-col-1 {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+            min-width: 100px;
+        }
+        .sticky-col-2 {
+            position: sticky;
+            left: 100px;
+            background: white;
+            z-index: 5;
+            min-width: 200px;
+        }
+        th.sticky-col-1, th.sticky-col-2 {
+            background: #f8fafc;
+            z-index: 15;
+        }
+        /* Linha inativa */
         .inactive-row {
             opacity: 0.5;
             background-color: #f1f5f9 !important;
@@ -270,28 +312,8 @@
         .inactive-row td {
             text-decoration: line-through;
         }
-        /* Colunas fixas com fundo consistente */
-        .sticky-col-1 {
-            position: sticky;
-            left: 0;
-            background-color: white;
-            z-index: 2;
-            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
-        }
-        .sticky-col-2 {
-            position: sticky;
-            left: 80px; /* ajuste para não sobrepor */
-            background-color: white;
-            z-index: 2;
-            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
-        }
-        th.sticky-col-1, th.sticky-col-2 {
-            background-color: #f8fafc;
-            z-index: 3;
-        }
-        /* Para evitar buracos, garantir que as células não tenham background transparente */
-        td.sticky-col-1, td.sticky-col-2 {
-            background-color: white;
+        .inactive-row .actions {
+            text-decoration: none;
         }
 
         /* Cards */
@@ -318,13 +340,22 @@
             gap: 8px;
             margin: 12px 0;
         }
+        .price-item {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 6px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
 
         /* Paginação */
         .pagination-container {
             margin-top: 24px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 12px;
         }
         .pagination-controls button {
             background: white;
@@ -332,6 +363,10 @@
             padding: 8px 14px;
             border-radius: 30px;
             cursor: pointer;
+        }
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Modal */
@@ -363,11 +398,31 @@
             overflow-y: auto;
             padding: 28px;
         }
+        .form-row {
+            margin-bottom: 16px;
+        }
+        .form-row label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .form-row input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+        }
         .prices-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin: 20px 0;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
         }
         .btn-save, .btn-cancel {
             padding: 10px 24px;
@@ -377,9 +432,6 @@
         }
         .btn-save { background: #16a34a; color: white; }
         .btn-cancel { background: #e2e8f0; color: #1e293b; }
-        .form-row { margin-bottom: 16px; }
-        .form-row label { display: block; font-weight: 600; margin-bottom: 6px; }
-        .form-row input { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
@@ -388,10 +440,10 @@
 <div class="login-container" id="loginContainer">
     <div class="login-card">
         <div class="login-logo">
-            <img src="logo.png" alt="Logo da Empresa">
+            <img src="logo.png" alt="Logo Bioscare">
         </div>
         <div class="login-title">Tabela de Preços</div>
-        <div class="login-sub">Acesse o sistema de preços</div>
+        <div class="login-sub">Acesse o sistema com suas credenciais</div>
         <div class="input-group">
             <label>E-mail</label>
             <input type="email" id="loginEmail" class="login-input" placeholder="seu@email.com">
@@ -402,8 +454,11 @@
         </div>
         <button class="btn-login" onclick="fazerLogin()">Entrar</button>
         <div class="credentials-hint">
-            <strong>Contato:</strong><br>
-            pedidos@bioscare.com.br 
+            <strong>Credenciais de teste:</strong><br>
+            admin@empresa.com / admin123<br>
+            gerencia@empresa.com / gerencia123<br>
+            vendedor@empresa.com / vendedor123<br>
+            representante@empresa.com / rep123
         </div>
         <div id="loginError" class="error-message"></div>
     </div>
@@ -413,17 +468,18 @@
 <div class="system-container" id="systemContainer">
     <div class="main-header">
         <div class="logo-area">
-            <img src="logo.png" alt="Logo" style="height: 40px;">
+            <img src="logo.png" alt="Logo">
             <h1>Tabela de Preços</h1>
         </div>
         <div class="user-info">
             <span><i class="fas fa-user"></i> <span id="perfilLabel"></span></span>
-            <button class="btn-logout" onclick="logout()">Sair</button>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </div>
 
-    <div class="profile-panel" id="profilePanel">
-        <div class="profile-badge">Perfil: <strong id="perfilDetalhe"></strong></div>
+    <!-- Painel de simulação (visível apenas para Admin e Gerente) -->
+    <div class="profile-panel" id="profilePanel" style="display: none;">
+        <div class="profile-badge">Perfil atual: <strong id="perfilDetalhe"></strong></div>
         <div class="btn-group">
             <button onclick="mudarNivel('admin')">⚙️ Admin</button>
             <button onclick="mudarNivel('gerente')">👔 Gerência</button>
@@ -435,25 +491,26 @@
     <div class="search-section">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por código ou descrição..." onkeyup="aplicarFiltro()">
         <div class="action-buttons">
-            <button onclick="exportarCSV()">📄 CSV</button>
-            <button onclick="exportarExcel()">📊 Excel</button>
-            <button onclick="alternarVisualizacao()">🔄 Cards</button>
+            <button onclick="exportarCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+            <button onclick="exportarExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+            <button onclick="alternarVisualizacao()"><i class="fas fa-table-cells-large"></i> Cards</button>
         </div>
     </div>
 
-    <div class="import-section" id="importSection">
-        <h3>Importar dados</h3>
-        <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <button class="btn-import-excel" onclick="document.getElementById('fileExcel').click()">📂 Importar Excel</button>
-            <input type="file" id="fileExcel" accept=".xls,.xlsx" style="display:none" onchange="importarArquivoExcel(this.files[0])">
-            <span>ou cole CSV:</span>
+    <!-- Importador (só Admin) -->
+    <div class="import-section" id="importSection" style="display: none;">
+        <h3><i class="fas fa-upload"></i> Importar dados</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+            <button class="btn-import-excel" onclick="document.getElementById('fileExcel').click()"><i class="fas fa-file-excel"></i> Importar Excel</button>
+            <input type="file" id="fileExcel" accept=".xls,.xlsx" style="display: none;" onchange="importarArquivoExcel(this.files[0])">
+            <span>ou cole CSV abaixo:</span>
         </div>
         <textarea id="csvInput">001;Arroz Agulhinha 5kg;Pct;18.50;19.00;19.50;20.00;21.00;21.50;22.00;22.50
 002;Feijão Preto 1kg;Un;7.20;7.40;7.60;7.80;8.20;8.40;8.60;8.80
 003;Óleo de Soja 900ml;Cxa;5.10;5.25;5.40;5.55;5.80;5.95;6.10;6.25
 104;Açúcar Refinado 1kg;Pct;4.10;4.20;4.30;4.40;4.50;4.60;4.70;4.80
 205;Café Torrado 500g;Un;14.20;14.50;14.80;15.10;15.50;15.80;16.10;16.40</textarea>
-        <button class="btn-import" onclick="processarImportacao()">➕ Processar CSV</button>
+        <button class="btn-import" onclick="processarImportacao()"><i class="fas fa-play"></i> Processar CSV</button>
     </div>
 
     <div class="table-wrapper" id="tableView">
@@ -490,7 +547,7 @@
 <!-- MODAL DE EDIÇÃO -->
 <div id="editModal" class="modal-overlay">
     <div class="modal-container">
-        <h2>✏️ Editar Produto</h2>
+        <h2><i class="fas fa-edit"></i> Editar Produto</h2>
         <input type="hidden" id="editRowId">
         <div class="form-row">
             <label>Código</label>
@@ -520,8 +577,9 @@
         "vendedor@empresa.com": { senha: "vendedor123", nivel: "vendedor1" },
         "representante@empresa.com": { senha: "rep123", nivel: "vendedor2" }
     };
-    let nivelReal = 'admin';
-    let nivelAtual = 'admin';
+    
+    let nivelReal = 'admin';      // Perfil real do login (não pode ser alterado por vendedor/rep)
+    let nivelAtual = 'admin';     // Perfil que está sendo exibido (pode ser alterado via simulação apenas por admin/gerente)
     let produtos = [];
     let filtroTexto = '';
     let colunaOrdenacao = 'codigo';
@@ -538,9 +596,14 @@
         { codigo: "205", descricao: "Café Torrado 500g", frac: "Un", preco1:14.20, preco2:14.50, preco3:14.80, preco4:15.10, preco5:15.50, preco6:15.80, preco7:16.10, preco8:16.40, ativo: true }
     ];
 
-    function carregarDados() { const local = localStorage.getItem('produtosPrecos'); if(local) produtos = JSON.parse(local); else produtos = JSON.parse(JSON.stringify(dadosIniciais)); }
+    function carregarDados() {
+        const local = localStorage.getItem('produtosPrecos');
+        if (local) produtos = JSON.parse(local);
+        else produtos = JSON.parse(JSON.stringify(dadosIniciais));
+    }
     function salvarLocalStorage() { localStorage.setItem('produtosPrecos', JSON.stringify(produtos)); }
 
+    // Define quais colunas de preço serão exibidas com base no nível atual
     function determinarColunasPreco() {
         if (nivelAtual === 'admin' || nivelAtual === 'gerente') return [1,2,3,4,5,6,7,8];
         if (nivelAtual === 'vendedor1') return [1,2,3,4];
@@ -548,43 +611,67 @@
         return [];
     }
 
+    // ========== ORDENAÇÃO, FILTRO, PAGINAÇÃO ==========
     function ordenarProdutos(lista) {
-        return [...lista].sort((a,b) => {
-            let aVal,bVal;
-            if(colunaOrdenacao === 'codigo') { aVal = a.codigo; bVal = b.codigo; }
-            else if(colunaOrdenacao === 'descricao') { aVal = a.descricao; bVal = b.descricao; }
-            else if(colunaOrdenacao.startsWith('preco')) { aVal = a[colunaOrdenacao] || 0; bVal = b[colunaOrdenacao] || 0; }
+        return [...lista].sort((a, b) => {
+            let aVal, bVal;
+            if (colunaOrdenacao === 'codigo') { aVal = a.codigo; bVal = b.codigo; }
+            else if (colunaOrdenacao === 'descricao') { aVal = a.descricao; bVal = b.descricao; }
+            else if (colunaOrdenacao.startsWith('preco')) { aVal = a[colunaOrdenacao] || 0; bVal = b[colunaOrdenacao] || 0; }
             else return 0;
-            if(typeof aVal === 'string') return ordemAscendente ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            if (typeof aVal === 'string') return ordemAscendente ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
             else return ordemAscendente ? aVal - bVal : bVal - aVal;
         });
     }
     function aplicarOrdenacao(coluna) {
-        if(colunaOrdenacao === coluna) ordemAscendente = !ordemAscendente;
+        if (colunaOrdenacao === coluna) ordemAscendente = !ordemAscendente;
         else { colunaOrdenacao = coluna; ordemAscendente = true; }
         paginaAtual = 1;
         atualizarVisualizacaoCompleta();
     }
-    function aplicarFiltro() { filtroTexto = document.getElementById('searchInput').value.toLowerCase(); paginaAtual = 1; atualizarVisualizacaoCompleta(); }
+    function aplicarFiltro() {
+        filtroTexto = document.getElementById('searchInput').value.toLowerCase();
+        paginaAtual = 1;
+        atualizarVisualizacaoCompleta();
+    }
     function getProdutosFiltradosOrdenados() {
         let filtrados = produtos.filter(p => p.codigo.toLowerCase().includes(filtroTexto) || p.descricao.toLowerCase().includes(filtroTexto));
         return ordenarProdutos(filtrados);
     }
-    function getPaginaAtual(lista) { const inicio = (paginaAtual-1)*itensPorPagina; return lista.slice(inicio, inicio+itensPorPagina); }
-    function atualizarPaginacaoControles(totalItens) {
-        const totalPaginas = Math.ceil(totalItens/itensPorPagina)||1;
-        document.getElementById('pageInfo').innerText = `Página ${paginaAtual} de ${totalPaginas}`;
-        document.getElementById('btnPrimeira').disabled = (paginaAtual===1);
-        document.getElementById('btnAnterior').disabled = (paginaAtual===1);
-        document.getElementById('btnProxima').disabled = (paginaAtual===totalPaginas);
-        document.getElementById('btnUltima').disabled = (paginaAtual===totalPaginas);
+    function getPaginaAtual(lista) {
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        return lista.slice(inicio, inicio + itensPorPagina);
     }
-    function irParaPagina(pag) { const totalItens = getProdutosFiltradosOrdenados().length; const totalPaginas = Math.ceil(totalItens/itensPorPagina)||1; if(pag<1) pag=1; if(pag>totalPaginas) pag=totalPaginas; paginaAtual=pag; atualizarVisualizacaoCompleta(); }
-    function paginaAnterior() { irParaPagina(paginaAtual-1); }
-    function proximaPagina() { irParaPagina(paginaAtual+1); }
-    function irParaUltimaPagina() { const totalItens = getProdutosFiltradosOrdenados().length; const totalPaginas = Math.ceil(totalItens/itensPorPagina)||1; irParaPagina(totalPaginas); }
-    function mudarItensPorPagina() { itensPorPagina = parseInt(document.getElementById('perPageSelect').value); paginaAtual=1; atualizarVisualizacaoCompleta(); }
+    function atualizarPaginacaoControles(totalItens) {
+        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
+        document.getElementById('pageInfo').innerText = `Página ${paginaAtual} de ${totalPaginas}`;
+        document.getElementById('btnPrimeira').disabled = (paginaAtual === 1);
+        document.getElementById('btnAnterior').disabled = (paginaAtual === 1);
+        document.getElementById('btnProxima').disabled = (paginaAtual === totalPaginas);
+        document.getElementById('btnUltima').disabled = (paginaAtual === totalPaginas);
+    }
+    function irParaPagina(pag) {
+        const totalItens = getProdutosFiltradosOrdenados().length;
+        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
+        if (pag < 1) pag = 1;
+        if (pag > totalPaginas) pag = totalPaginas;
+        paginaAtual = pag;
+        atualizarVisualizacaoCompleta();
+    }
+    function paginaAnterior() { irParaPagina(paginaAtual - 1); }
+    function proximaPagina() { irParaPagina(paginaAtual + 1); }
+    function irParaUltimaPagina() {
+        const totalItens = getProdutosFiltradosOrdenados().length;
+        const totalPaginas = Math.ceil(totalItens / itensPorPagina) || 1;
+        irParaPagina(totalPaginas);
+    }
+    function mudarItensPorPagina() {
+        itensPorPagina = parseInt(document.getElementById('perPageSelect').value);
+        paginaAtual = 1;
+        atualizarVisualizacaoCompleta();
+    }
 
+    // ========== RENDERIZAÇÃO TABELA ==========
     function renderizarTabela() {
         const thead = document.getElementById('tabelaHead');
         const tbody = document.getElementById('corpoTabela');
@@ -593,12 +680,13 @@
         const listaPagina = getPaginaAtual(listaTotal);
         atualizarPaginacaoControles(listaTotal.length);
 
+        // Montar cabeçalho
         thead.innerHTML = '';
         const headerRow = document.createElement('tr');
         const createTh = (texto, coluna, classe) => {
             const th = document.createElement('th');
             th.textContent = texto;
-            if(classe) th.className = classe;
+            if (classe) th.className = classe;
             th.style.cursor = 'pointer';
             th.onclick = () => aplicarOrdenacao(coluna);
             return th;
@@ -606,26 +694,53 @@
         headerRow.appendChild(createTh('Código', 'codigo', 'sticky-col-1'));
         headerRow.appendChild(createTh('Descrição', 'descricao', 'sticky-col-2'));
         headerRow.appendChild(createTh('Frac.', null));
-        colunasPreco.forEach(i => { headerRow.appendChild(createTh(`Tab ${i}`, `preco${i}`, '')); });
+        colunasPreco.forEach(i => {
+            headerRow.appendChild(createTh(`Tab ${i}`, `preco${i}`, ''));
+        });
         const podeEditar = (nivelAtual === 'admin' || nivelAtual === 'gerente');
-        if(podeEditar) { const thAcoes = document.createElement('th'); thAcoes.textContent = 'Ações'; headerRow.appendChild(thAcoes); }
+        if (podeEditar) {
+            const thAcoes = document.createElement('th');
+            thAcoes.textContent = 'Ações';
+            headerRow.appendChild(thAcoes);
+        }
         thead.appendChild(headerRow);
 
+        // Corpo da tabela
         tbody.innerHTML = '';
         listaPagina.forEach(prod => {
             const row = tbody.insertRow();
-            if(!prod.ativo) row.classList.add('inactive-row');
-            const cellCod = row.insertCell(0); cellCod.textContent = prod.codigo; cellCod.classList.add('sticky-col-1');
-            const cellDesc = row.insertCell(1); cellDesc.textContent = prod.descricao; cellDesc.classList.add('sticky-col-2');
-            const cellFrac = row.insertCell(2); cellFrac.textContent = prod.frac;
-            colunasPreco.forEach(i => { const cell = row.insertCell(); cell.textContent = (prod[`preco${i}`]||0).toFixed(2); });
-            if(podeEditar) {
+            if (!prod.ativo) row.classList.add('inactive-row');
+            
+            const cellCod = row.insertCell(0);
+            cellCod.textContent = prod.codigo;
+            cellCod.classList.add('sticky-col-1');
+            
+            const cellDesc = row.insertCell(1);
+            cellDesc.textContent = prod.descricao;
+            cellDesc.classList.add('sticky-col-2');
+            
+            const cellFrac = row.insertCell(2);
+            cellFrac.textContent = prod.frac;
+            
+            colunasPreco.forEach(i => {
+                const cell = row.insertCell();
+                cell.textContent = (prod[`preco${i}`] || 0).toFixed(2);
+            });
+            
+            if (podeEditar) {
                 const cellActions = row.insertCell();
-                const btnEditar = document.createElement('button'); btnEditar.textContent='Editar'; btnEditar.style.cssText='background:#ca8a04; color:white; padding:4px 10px; border-radius:20px; border:none; margin-right:5px; cursor:pointer;';
+                cellActions.classList.add('actions');
+                const btnEditar = document.createElement('button');
+                btnEditar.textContent = 'Editar';
+                btnEditar.style.cssText = 'background:#ca8a04; color:white; padding:4px 10px; border-radius:20px; border:none; margin-right:5px; cursor:pointer;';
                 btnEditar.onclick = () => abrirModal(prod.codigo);
-                const btnExcluir = document.createElement('button'); btnExcluir.textContent='Excluir'; btnExcluir.style.cssText='background:#dc2626; color:white; padding:4px 10px; border-radius:20px; border:none; margin-right:5px; cursor:pointer;';
+                const btnExcluir = document.createElement('button');
+                btnExcluir.textContent = 'Excluir';
+                btnExcluir.style.cssText = 'background:#dc2626; color:white; padding:4px 10px; border-radius:20px; border:none; margin-right:5px; cursor:pointer;';
                 btnExcluir.onclick = () => excluirProduto(prod.codigo);
-                const btnStatus = document.createElement('button'); btnStatus.textContent = prod.ativo ? 'Inativar' : 'Ativar'; btnStatus.style.cssText='background:#64748b; color:white; padding:4px 10px; border-radius:20px; border:none; cursor:pointer;';
+                const btnStatus = document.createElement('button');
+                btnStatus.textContent = prod.ativo ? 'Inativar' : 'Ativar';
+                btnStatus.style.cssText = 'background:#64748b; color:white; padding:4px 10px; border-radius:20px; border:none; cursor:pointer;';
                 btnStatus.onclick = () => toggleStatusProduto(prod.codigo);
                 cellActions.append(btnEditar, btnExcluir, btnStatus);
             }
@@ -641,19 +756,31 @@
         container.innerHTML = '';
         const podeEditar = (nivelAtual === 'admin' || nivelAtual === 'gerente');
         listaPagina.forEach(prod => {
-            const card = document.createElement('div'); card.className = 'product-card'; if(!prod.ativo) card.classList.add('inactive');
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            if (!prod.ativo) card.classList.add('inactive');
             let precoHtml = '<div class="card-prices">';
-            colunasPreco.forEach(i => { precoHtml += `<div class="price-item"><strong>Tab ${i}</strong><br>R$ ${(prod[`preco${i}`]||0).toFixed(2)}</div>`; });
+            colunasPreco.forEach(i => {
+                precoHtml += `<div class="price-item"><strong>Tab ${i}</strong><br>R$ ${(prod[`preco${i}`] || 0).toFixed(2)}</div>`;
+            });
             precoHtml += '</div>';
             let acoesHtml = '';
-            if(podeEditar) {
+            if (podeEditar) {
                 acoesHtml = `<div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
                     <button onclick="abrirModal('${prod.codigo}')" style="background:#ca8a04; color:white; border:none; padding:6px 12px; border-radius:20px;">Editar</button>
                     <button onclick="excluirProduto('${prod.codigo}')" style="background:#dc2626; color:white; border:none; padding:6px 12px; border-radius:20px;">Excluir</button>
                     <button onclick="toggleStatusProduto('${prod.codigo}')" style="background:#64748b; color:white; border:none; padding:6px 12px; border-radius:20px;">${prod.ativo ? 'Inativar' : 'Ativar'}</button>
                 </div>`;
             }
-            card.innerHTML = `<div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid #e2e8f0; padding-bottom:8px; margin-bottom:12px;"><span>${prod.codigo}</span><span>${prod.frac}</span></div><div style="font-weight:600; margin-bottom:8px;">${prod.descricao}</div>${precoHtml}${acoesHtml}`;
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px solid #e2e8f0; padding-bottom:8px; margin-bottom:12px;">
+                    <span>${prod.codigo}</span>
+                    <span>${prod.frac}</span>
+                </div>
+                <div style="font-weight:600; margin-bottom:8px;">${prod.descricao}</div>
+                ${precoHtml}
+                ${acoesHtml}
+            `;
             container.appendChild(card);
         });
     }
@@ -662,16 +789,28 @@
         visualizacaoCards = !visualizacaoCards;
         const tableView = document.getElementById('tableView');
         const cardsView = document.getElementById('cardsView');
-        if(visualizacaoCards) { tableView.style.display = 'none'; cardsView.classList.add('active'); renderizarCards(); }
-        else { tableView.style.display = 'block'; cardsView.classList.remove('active'); renderizarTabela(); }
+        if (visualizacaoCards) {
+            tableView.style.display = 'none';
+            cardsView.classList.add('active');
+            renderizarCards();
+        } else {
+            tableView.style.display = 'block';
+            cardsView.classList.remove('active');
+            renderizarTabela();
+        }
     }
-    function atualizarVisualizacaoCompleta() { if(visualizacaoCards) renderizarCards(); else renderizarTabela(); }
 
+    function atualizarVisualizacaoCompleta() {
+        if (visualizacaoCards) renderizarCards();
+        else renderizarTabela();
+    }
+
+    // Controle de nível: só permite simular se o perfil real for admin ou gerente
     function mudarNivel(nivel) {
-        if(nivelReal !== 'admin' && nivelReal !== 'gerente') return;
+        if (nivelReal !== 'admin' && nivelReal !== 'gerente') return;
         nivelAtual = nivel;
         const importDiv = document.getElementById('importSection');
-        if(importDiv) importDiv.style.display = (nivel === 'admin') ? 'block' : 'none';
+        if (importDiv) importDiv.style.display = (nivel === 'admin') ? 'block' : 'none';
         document.getElementById('perfilLabel').innerText = (nivel === 'admin' ? 'Admin' : (nivel === 'gerente' ? 'Gerente' : (nivel === 'vendedor1' ? 'Vendedor' : 'Representante')));
         document.getElementById('perfilDetalhe').innerText = nivel;
         paginaAtual = 1;
@@ -680,57 +819,238 @@
 
     function atualizarVisibilidadePainel() {
         const panel = document.getElementById('profilePanel');
-        if(panel) panel.style.display = (nivelReal === 'admin' || nivelReal === 'gerente') ? 'flex' : 'none';
+        if (panel) {
+            panel.style.display = (nivelReal === 'admin' || nivelReal === 'gerente') ? 'flex' : 'none';
+        }
     }
 
-    function abrirModal(codigo) { if(nivelAtual !== 'admin' && nivelAtual !== 'gerente') return; const produto = produtos.find(p=>p.codigo===codigo); if(!produto) return; window.produtoEditandoCodigo=codigo; document.getElementById('editCodigo').value=produto.codigo; document.getElementById('editDescricao').value=produto.descricao; document.getElementById('editFrac').value=produto.frac; for(let i=1;i<=8;i++){ const input = document.getElementById(`editPreco${i}`); if(input) input.value=produto[`preco${i}`]; } document.getElementById('editModal').classList.add('active'); }
-    function fecharModal() { document.getElementById('editModal').classList.remove('active'); window.produtoEditandoCodigo=null; }
-    function salvarEdicao() { if(!window.produtoEditandoCodigo) return; const index = produtos.findIndex(p=>p.codigo===window.produtoEditandoCodigo); if(index===-1) return; const descricao = document.getElementById('editDescricao').value.trim(); if(!descricao) { alert('Descrição obrigatória'); return; } const frac = document.getElementById('editFrac').value.trim(); const novosPrecos = {}; let valido=true; for(let i=1;i<=8;i++){ const val = parseFloat(document.getElementById(`editPreco${i}`).value); if(isNaN(val) || val<0) { alert(`Preço Tab ${i} inválido`); valido=false; break; } novosPrecos[`preco${i}`]=val; } if(!valido) return; produtos[index]={...produtos[index], descricao, frac, ...novosPrecos}; salvarLocalStorage(); fecharModal(); atualizarVisualizacaoCompleta(); }
-    function excluirProduto(codigo) { if(nivelAtual !== 'admin' && nivelAtual !== 'gerente') return; if(confirm(`Excluir ${codigo}?`)) { produtos = produtos.filter(p=>p.codigo!==codigo); salvarLocalStorage(); if(produtos.length===0 && paginaAtual>1) paginaAtual--; atualizarVisualizacaoCompleta(); } }
-    function toggleStatusProduto(codigo) { if(nivelAtual !== 'admin' && nivelAtual !== 'gerente') return; const produto = produtos.find(p=>p.codigo===codigo); if(produto) { produto.ativo = !produto.ativo; salvarLocalStorage(); atualizarVisualizacaoCompleta(); } }
+    // ========== CRUD ==========
+    function abrirModal(codigo) {
+        if (nivelAtual !== 'admin' && nivelAtual !== 'gerente') return;
+        const produto = produtos.find(p => p.codigo === codigo);
+        if (!produto) return;
+        window.produtoEditandoCodigo = codigo;
+        document.getElementById('editCodigo').value = produto.codigo;
+        document.getElementById('editDescricao').value = produto.descricao;
+        document.getElementById('editFrac').value = produto.frac;
+        for (let i = 1; i <= 8; i++) {
+            const input = document.getElementById(`editPreco${i}`);
+            if (input) input.value = produto[`preco${i}`];
+        }
+        document.getElementById('editModal').classList.add('active');
+    }
+    function fecharModal() { document.getElementById('editModal').classList.remove('active'); window.produtoEditandoCodigo = null; }
+    function salvarEdicao() {
+        if (!window.produtoEditandoCodigo) return;
+        const index = produtos.findIndex(p => p.codigo === window.produtoEditandoCodigo);
+        if (index === -1) return;
+        const descricao = document.getElementById('editDescricao').value.trim();
+        if (!descricao) { alert('Descrição obrigatória'); return; }
+        const frac = document.getElementById('editFrac').value.trim();
+        const novosPrecos = {};
+        let valido = true;
+        for (let i = 1; i <= 8; i++) {
+            const val = parseFloat(document.getElementById(`editPreco${i}`).value);
+            if (isNaN(val) || val < 0) { alert(`Preço da Tab ${i} inválido (deve ser número >= 0)`); valido = false; break; }
+            novosPrecos[`preco${i}`] = val;
+        }
+        if (!valido) return;
+        produtos[index] = { ...produtos[index], descricao, frac, ...novosPrecos };
+        salvarLocalStorage();
+        fecharModal();
+        atualizarVisualizacaoCompleta();
+    }
+    function excluirProduto(codigo) {
+        if (nivelAtual !== 'admin' && nivelAtual !== 'gerente') return;
+        if (confirm(`Excluir ${codigo}?`)) {
+            produtos = produtos.filter(p => p.codigo !== codigo);
+            salvarLocalStorage();
+            if (produtos.length === 0 && paginaAtual > 1) paginaAtual--;
+            atualizarVisualizacaoCompleta();
+        }
+    }
+    function toggleStatusProduto(codigo) {
+        if (nivelAtual !== 'admin' && nivelAtual !== 'gerente') return;
+        const produto = produtos.find(p => p.codigo === codigo);
+        if (produto) {
+            produto.ativo = !produto.ativo;
+            salvarLocalStorage();
+            atualizarVisualizacaoCompleta();
+        }
+    }
 
-    function processarImportacao() { if(nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; } const csvText = document.getElementById('csvInput').value; const linhas = csvText.trim().split(/\r?\n/); let adicionados=0, atualizados=0; for(let linha of linhas){ const partes = linha.split(';'); if(partes.length!==11) continue; const codigo=partes[0].trim(), descricao=partes[1].trim(), frac=partes[2].trim(), precos=partes.slice(3).map(v=>parseFloat(v.replace(',','.'))); if(precos.some(isNaN)) continue; const novoProduto={codigo,descricao,frac, preco1:precos[0],preco2:precos[1],preco3:precos[2],preco4:precos[3],preco5:precos[4],preco6:precos[5],preco7:precos[6],preco8:precos[7], ativo:true}; const idx=produtos.findIndex(p=>p.codigo===codigo); if(idx!==-1){ produtos[idx]={...novoProduto, ativo:produtos[idx].ativo}; atualizados++; } else { produtos.push(novoProduto); adicionados++; } } alert(`CSV: ${adicionados} novos, ${atualizados} atualizados.`); salvarLocalStorage(); paginaAtual=1; atualizarVisualizacaoCompleta(); }
-    function importarArquivoExcel(file) { if(!file) return; if(nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; } const reader = new FileReader(); reader.onload = function(e){ const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data,{type:'array'}); const primeiraPlanilha = workbook.Sheets[workbook.SheetNames[0]]; const linhas = XLSX.utils.sheet_to_json(primeiraPlanilha,{header:1,defval:""}); if(!linhas||linhas.length===0){ alert('Arquivo vazio'); return; } let adicionados=0, atualizados=0; for(let i=1;i<linhas.length;i++){ const linha=linhas[i]; if(linha.length<11) continue; const codigo=String(linha[0]||"").trim(), descricao=String(linha[1]||"").trim(), frac=String(linha[2]||"").trim(); const precos=[]; for(let j=3;j<=10;j++){ let val=parseFloat(linha[j]); if(isNaN(val)) val=0; precos.push(val); } if(codigo===""||descricao==="") continue; const novoProduto={codigo,descricao,frac, preco1:precos[0],preco2:precos[1],preco3:precos[2],preco4:precos[3],preco5:precos[4],preco6:precos[5],preco7:precos[6],preco8:precos[7], ativo:true}; const idx=produtos.findIndex(p=>p.codigo===codigo); if(idx!==-1){ produtos[idx]={...novoProduto, ativo:produtos[idx].ativo}; atualizados++; } else { produtos.push(novoProduto); adicionados++; } } alert(`Excel: ${adicionados} novos, ${atualizados} atualizados.`); salvarLocalStorage(); paginaAtual=1; atualizarVisualizacaoCompleta(); }; reader.readAsArrayBuffer(file); }
+    // ========== IMPORTAÇÃO ==========
+    function processarImportacao() {
+        if (nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; }
+        const csvText = document.getElementById('csvInput').value;
+        const linhas = csvText.trim().split(/\r?\n/);
+        let adicionados = 0, atualizados = 0;
+        for (let linha of linhas) {
+            const partes = linha.split(';');
+            if (partes.length !== 11) continue;
+            const codigo = partes[0].trim();
+            const descricao = partes[1].trim();
+            const frac = partes[2].trim();
+            const precos = partes.slice(3).map(v => parseFloat(v.replace(',', '.')));
+            if (precos.some(isNaN)) continue;
+            const novoProduto = {
+                codigo, descricao, frac,
+                preco1: precos[0], preco2: precos[1], preco3: precos[2], preco4: precos[3],
+                preco5: precos[4], preco6: precos[5], preco7: precos[6], preco8: precos[7],
+                ativo: true
+            };
+            const idx = produtos.findIndex(p => p.codigo === codigo);
+            if (idx !== -1) { produtos[idx] = { ...novoProduto, ativo: produtos[idx].ativo }; atualizados++; }
+            else { produtos.push(novoProduto); adicionados++; }
+        }
+        alert(`CSV: ${adicionados} novos, ${atualizados} atualizados.`);
+        salvarLocalStorage();
+        paginaAtual = 1;
+        atualizarVisualizacaoCompleta();
+    }
 
-    function exportarCSV() { let csvRows = [["Código;Descrição;Frac;Tab1;Tab2;Tab3;Tab4;Tab5;Tab6;Tab7;Tab8"]]; produtos.forEach(p=>{ csvRows.push(`${p.codigo};${p.descricao};${p.frac};${p.preco1};${p.preco2};${p.preco3};${p.preco4};${p.preco5};${p.preco6};${p.preco7};${p.preco8}`); }); const blob = new Blob([csvRows.join("\n")],{type:"text/csv;charset=utf-8"}); const link = document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="precos.csv"; link.click(); URL.revokeObjectURL(link.href); }
-    function exportarExcel() { let html = '<table border="1"><tr><th>Código</th><th>Descrição</th><th>Frac</th>'; for(let i=1;i<=8;i++) html+=`<th>Tab${i}</th>`; html+='</tr>'; produtos.forEach(p=>{ html+=`<tr><td>${p.codigo}</td><td>${p.descricao}</td><td>${p.frac}</td>`; for(let i=1;i<=8;i++) html+=`<td>${p[`preco${i}`]}</td>`; html+=`</tr>`; }); html+='</table>'; const blob = new Blob([html],{type:"application/vnd.ms-excel"}); const link=document.createElement("a"); link.href=URL.createObjectURL(blob); link.download="precos.xls"; link.click(); URL.revokeObjectURL(link.href); }
+    function importarArquivoExcel(file) {
+        if (!file) return;
+        if (nivelAtual !== 'admin') { alert('Apenas Admin pode importar.'); return; }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const primeiraPlanilha = workbook.Sheets[workbook.SheetNames[0]];
+            const linhas = XLSX.utils.sheet_to_json(primeiraPlanilha, { header: 1, defval: "" });
+            if (!linhas || linhas.length === 0) { alert('Arquivo vazio.'); return; }
+            let adicionados = 0, atualizados = 0;
+            for (let i = 1; i < linhas.length; i++) {
+                const linha = linhas[i];
+                if (linha.length < 11) continue;
+                const codigo = String(linha[0] || "").trim();
+                const descricao = String(linha[1] || "").trim();
+                const frac = String(linha[2] || "").trim();
+                const precos = [];
+                for (let j = 3; j <= 10; j++) {
+                    let val = parseFloat(linha[j]);
+                    if (isNaN(val)) val = 0;
+                    precos.push(val);
+                }
+                if (codigo === "" || descricao === "") continue;
+                const novoProduto = {
+                    codigo, descricao, frac,
+                    preco1: precos[0], preco2: precos[1], preco3: precos[2], preco4: precos[3],
+                    preco5: precos[4], preco6: precos[5], preco7: precos[6], preco8: precos[7],
+                    ativo: true
+                };
+                const idx = produtos.findIndex(p => p.codigo === codigo);
+                if (idx !== -1) { produtos[idx] = { ...novoProduto, ativo: produtos[idx].ativo }; atualizados++; }
+                else { produtos.push(novoProduto); adicionados++; }
+            }
+            alert(`Excel: ${adicionados} novos, ${atualizados} atualizados.`);
+            salvarLocalStorage();
+            paginaAtual = 1;
+            atualizarVisualizacaoCompleta();
+        };
+        reader.readAsArrayBuffer(file);
+    }
 
-    function gerarCamposPrecoModal() { const container = document.getElementById('pricesGrid'); container.innerHTML = ''; for(let i=1;i<=8;i++){ const div = document.createElement('div'); div.className='price-field'; div.innerHTML=`<label>Tab ${i}</label><input type="number" step="0.01" min="0" id="editPreco${i}" class="form-input" value="0">`; container.appendChild(div); } }
+    // ========== EXPORTAÇÃO ==========
+    function exportarCSV() {
+        let csvRows = [["Código;Descrição;Frac;Tab1;Tab2;Tab3;Tab4;Tab5;Tab6;Tab7;Tab8"]];
+        produtos.forEach(p => {
+            csvRows.push(`${p.codigo};${p.descricao};${p.frac};${p.preco1};${p.preco2};${p.preco3};${p.preco4};${p.preco5};${p.preco6};${p.preco7};${p.preco8}`);
+        });
+        const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = "precos.csv";
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+    function exportarExcel() {
+        let html = '<table border="1"><tr><th>Código</th><th>Descrição</th><th>Frac</th>';
+        for (let i=1;i<=8;i++) html+=`<th>Tab${i}</th>`;
+        html+='</table>';
+        produtos.forEach(p => {
+            html+=`<tr><td>${p.codigo}</td><td>${p.descricao}</td><td>${p.frac}</td>`;
+            for(let i=1;i<=8;i++) html+=`<td>${p[`preco${i}`]}</td>`;
+            html+=`</tr>`;
+        });
+        html+='</table>';
+        const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "precos.xls";
+        link.click();
+        URL.revokeObjectURL(blob);
+    }
 
-    function fazerLogin() {
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const senha = document.getElementById('loginSenha').value;
-        const errorDiv = document.getElementById('loginError');
-        if(!usuarios[email] || usuarios[email].senha !== senha) { errorDiv.style.display='block'; errorDiv.innerText='E-mail ou senha inválidos.'; return; }
-        const nivel = usuarios[email].nivel;
-        sessionStorage.setItem('usuarioEmail', email);
-        sessionStorage.setItem('nivelAcesso', nivel);
+    function gerarCamposPrecoModal() {
+        const container = document.getElementById('pricesGrid');
+        container.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+            const div = document.createElement('div');
+            div.className = 'price-field';
+            div.innerHTML = `<label>Tab ${i}</label><input type="number" step="0.01" min="0" id="editPreco${i}" class="form-input" value="0">`;
+            container.appendChild(div);
+        }
+    }
+
+    // ========== INICIALIZAÇÃO PÓS-LOGIN ==========
+    function iniciarSistemaComNivel(nivel) {
         nivelReal = nivel;
         nivelAtual = nivel;
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('systemContainer').style.display = 'block';
-        iniciarSistemaComNivel(nivel);
-    }
-
-    function logout() { sessionStorage.clear(); document.getElementById('loginContainer').style.display='flex'; document.getElementById('systemContainer').style.display='none'; }
-
-    function verificarSessao() { const email = sessionStorage.getItem('usuarioEmail'); if(email && usuarios[email]){ const nivel = usuarios[email].nivel; nivelReal = nivel; nivelAtual = nivel; document.getElementById('loginContainer').style.display='none'; document.getElementById('systemContainer').style.display='block'; iniciarSistemaComNivel(nivel); } else { document.getElementById('loginContainer').style.display='flex'; document.getElementById('systemContainer').style.display='none'; } }
-
-    function iniciarSistemaComNivel(nivel) {
         carregarDados();
         gerarCamposPrecoModal();
-        nivelReal = nivel;
-        nivelAtual = nivel;
+        
+        // Aplicar configurações visuais iniciais
         const podeImportar = (nivel === 'admin');
         const importDiv = document.getElementById('importSection');
-        if(importDiv) importDiv.style.display = podeImportar ? 'block' : 'none';
-        document.getElementById('perfilLabel').innerText = (nivel==='admin'?'Admin':(nivel==='gerente'?'Gerente':(nivel==='vendedor1'?'Vendedor':'Representante')));
+        if (importDiv) importDiv.style.display = podeImportar ? 'block' : 'none';
+        
+        document.getElementById('perfilLabel').innerText = (nivel === 'admin' ? 'Admin' : (nivel === 'gerente' ? 'Gerente' : (nivel === 'vendedor1' ? 'Vendedor' : 'Representante')));
         document.getElementById('perfilDetalhe').innerText = nivel;
+        
         atualizarVisibilidadePainel();
         visualizacaoCards = false;
         document.getElementById('tableView').style.display = 'block';
         document.getElementById('cardsView').classList.remove('active');
         atualizarVisualizacaoCompleta();
+    }
+
+    // ========== LOGIN ==========
+    function fazerLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const senha = document.getElementById('loginSenha').value;
+        const errorDiv = document.getElementById('loginError');
+        if (!usuarios[email] || usuarios[email].senha !== senha) {
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = 'E-mail ou senha inválidos.';
+            return;
+        }
+        const nivel = usuarios[email].nivel;
+        sessionStorage.setItem('usuarioEmail', email);
+        sessionStorage.setItem('nivelAcesso', nivel);
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('systemContainer').style.display = 'block';
+        iniciarSistemaComNivel(nivel);
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('systemContainer').style.display = 'none';
+    }
+
+    function verificarSessao() {
+        const email = sessionStorage.getItem('usuarioEmail');
+        if (email && usuarios[email]) {
+            const nivel = usuarios[email].nivel;
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('systemContainer').style.display = 'block';
+            iniciarSistemaComNivel(nivel);
+        } else {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('systemContainer').style.display = 'none';
+        }
     }
 
     verificarSessao();
